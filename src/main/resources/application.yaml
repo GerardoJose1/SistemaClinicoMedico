@@ -23,3 +23,5 @@ spring:
 
   cache:
     type: redis
+
+    # cambio para autorizar
