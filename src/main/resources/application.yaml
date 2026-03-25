@@ -23,3 +23,8 @@ spring:
 
   cache:
     type: redis
+
+wordpress:
+  base-url: ${WORDPRESS_URL:http://localhost:9000}
+  username: ${WORDPRESS_USER:admin}
+  app-password: ${WORDPRESS_APP_PASSWORD:zPyB SYfc qQC6 Twrn PrWk mTOJ}
