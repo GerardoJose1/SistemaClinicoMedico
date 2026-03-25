@@ -1,11 +1,13 @@
 package com.sistemaClinico.clinicalEngine.controller;
 
+import com.sistemaClinico.clinicalEngine.dto.ApiResponse;
 import com.sistemaClinico.clinicalEngine.entity.Doctor;
 import com.sistemaClinico.clinicalEngine.service.DoctorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,34 +19,35 @@ public class DoctorController {
     private final DoctorService doctorService;
 
     @GetMapping
-    public ResponseEntity<Page<Doctor>> getDoctors(
+    public ResponseEntity<ApiResponse<Page<Doctor>>> getDoctors(
             @RequestParam(required = false) String specialty,
             Pageable pageable) {
         if (specialty != null) {
-            return ResponseEntity.ok(doctorService.findBySpecialty(specialty, pageable));
+            return ResponseEntity.ok(ApiResponse.success("Doctores obtenidos", doctorService.findBySpecialty(specialty, pageable)));
         }
-        return ResponseEntity.ok(doctorService.findAll(pageable));
+        return ResponseEntity.ok(ApiResponse.success("Doctores obtenidos", doctorService.findAll(pageable)));
     }
 
     @GetMapping("/specialties")
-    public ResponseEntity<?> getSpecialties() {
-        return ResponseEntity.ok(doctorService.getSpecialties());
+    public ResponseEntity<ApiResponse<?>> getSpecialties() {
+        return ResponseEntity.ok(ApiResponse.success("Especialidades obtenidas", doctorService.getSpecialties()));
     }
 
     @PostMapping
-    public ResponseEntity<Doctor> create(@Valid @RequestBody Doctor doctor) {
-        return ResponseEntity.ok(doctorService.save(doctor));
+    public ResponseEntity<ApiResponse<Doctor>> create(@Valid @RequestBody Doctor doctor) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Doctor añadido correctamente", doctorService.save(doctor)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Doctor> update(@PathVariable Long id,
+    public ResponseEntity<ApiResponse<Doctor>> update(@PathVariable Long id,
                                          @Valid @RequestBody Doctor doctor) {
-        return ResponseEntity.ok(doctorService.update(id, doctor));
+        return ResponseEntity.ok(ApiResponse.success("Doctor actualizado correctamente",doctorService.update(id, doctor)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         doctorService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("Doctor eliminado correctamente", null));
     }
 }

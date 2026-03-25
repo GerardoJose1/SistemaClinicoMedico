@@ -1,5 +1,6 @@
 package com.sistemaClinico.clinicalEngine.controller;
 
+import com.sistemaClinico.clinicalEngine.dto.ApiResponse;
 import com.sistemaClinico.clinicalEngine.entity.MedicalNote;
 import com.sistemaClinico.clinicalEngine.entity.MedicalRecord;
 import com.sistemaClinico.clinicalEngine.service.MedicalRecordService;
@@ -18,16 +19,16 @@ public class MedicalRecordController {
     private final MedicalRecordService medicalRecordService;
 
     @GetMapping("/{patientId}")
-    public ResponseEntity<Page<MedicalRecord>> getRecords(
+    public ResponseEntity<ApiResponse<Page<MedicalRecord>>> getRecords(
             @PathVariable Long patientId,
             Pageable pageable) {
-        return ResponseEntity.ok(medicalRecordService.findAllByPatientId(patientId, pageable));
+        return ResponseEntity.ok(ApiResponse.success("Historial médico obtenido",medicalRecordService.findAllByPatientId(patientId, pageable)));
     }
 
     @PostMapping("/{patientId}/notes")
-    public ResponseEntity<MedicalRecord> addNote(
+    public ResponseEntity<ApiResponse<MedicalRecord>> addNote(
             @PathVariable Long patientId,
             @Valid @RequestBody MedicalNote note) {
-        return ResponseEntity.ok(medicalRecordService.addNote(patientId, note));
+        return ResponseEntity.ok(ApiResponse.success("Nota añadida al historial",medicalRecordService.addNote(patientId, note)));
     }
 }
