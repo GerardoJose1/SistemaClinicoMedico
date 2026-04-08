@@ -1,0 +1,9 @@
+package com.sistemaClinico.clinicalEngine.enums;
+
+public enum AppointmentStatus {
+    SCHEDULED,
+    CONFIRMED,
+    IN_PROGRESS,
+    COMPLETED,
+    CANCELLED
+}
