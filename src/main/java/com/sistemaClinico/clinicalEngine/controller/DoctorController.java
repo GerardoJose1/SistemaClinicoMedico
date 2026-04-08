@@ -1,6 +1,7 @@
 package com.sistemaClinico.clinicalEngine.controller;
 
 import com.sistemaClinico.clinicalEngine.dto.ApiResponse;
+import com.sistemaClinico.clinicalEngine.dto.CreateDoctorRequest;
 import com.sistemaClinico.clinicalEngine.dto.UpdateDoctorRequest;
 import com.sistemaClinico.clinicalEngine.entity.Doctor;
 import com.sistemaClinico.clinicalEngine.service.DoctorService;
@@ -84,9 +85,9 @@ public class DoctorController {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Error al crear doctor")
     })
     public ResponseEntity<ApiResponse<Doctor>> create(
-            @Valid @RequestBody Doctor doctor) {
+            @Valid @RequestBody CreateDoctorRequest doctorRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Doctor añadido correctamente", doctorService.save(doctor)));
+                .body(ApiResponse.success("Doctor añadido correctamente", doctorService.create(doctorRequest)));
     }
 
     @PutMapping("/{id}")

@@ -1,5 +1,6 @@
 package com.sistemaClinico.clinicalEngine.service.impl;
 
+import com.sistemaClinico.clinicalEngine.dto.CreateDoctorRequest;
 import com.sistemaClinico.clinicalEngine.dto.UpdateDoctorRequest;
 import com.sistemaClinico.clinicalEngine.entity.Doctor;
 import com.sistemaClinico.clinicalEngine.repository.DoctorRepository;
@@ -19,6 +20,17 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Doctor save(Doctor doctor) {
+        return doctorRepository.save(doctor);
+    }
+
+    @Override
+    public Doctor create(CreateDoctorRequest doctorRequest) {
+        Doctor doctor = Doctor.builder()
+                .name(doctorRequest.getName())
+                .specialty(doctorRequest.getSpecialty())
+                .availableHours(doctorRequest.getAvailableHours())
+                .consultationFee(doctorRequest.getConsultationFee())
+                .build();
         return doctorRepository.save(doctor);
     }
 
