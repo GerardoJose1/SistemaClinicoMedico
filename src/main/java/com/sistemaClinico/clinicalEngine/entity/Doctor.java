@@ -5,19 +5,12 @@ import jakarta.validation.constraints.*;
 // import lombok.*;
 import java.math.BigDecimal;
 import java.util.List;
-<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
 @Table(name = "doctors")
-// Lombok removido. Getters, setters, constructores y builder manual agrgit statusegados.
-=======
-
-@Entity
-@Table(name = "doctors")
 // Lombok removido. Getters, setters, constructores y builder manual agregados.
->>>>>>> 9059c39ca23cae97fc2c92f65a85d71e66fdd794
 public class Doctor {
 
     @Id
@@ -40,10 +33,7 @@ public class Doctor {
     @Column(name = "consultation_fee", nullable = false)
     private BigDecimal consultationFee;
 
-<<<<<<< HEAD
     @JsonIgnore
-=======
->>>>>>> 9059c39ca23cae97fc2c92f65a85d71e66fdd794
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
