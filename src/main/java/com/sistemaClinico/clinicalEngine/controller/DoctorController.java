@@ -1,6 +1,7 @@
 package com.sistemaClinico.clinicalEngine.controller;
 
 import com.sistemaClinico.clinicalEngine.dto.ApiResponse;
+import com.sistemaClinico.clinicalEngine.dto.UpdateDoctorRequest;
 import com.sistemaClinico.clinicalEngine.entity.Doctor;
 import com.sistemaClinico.clinicalEngine.service.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,24 +38,31 @@ public class DoctorController {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Parámetros inválidos")
     })
     public ResponseEntity<ApiResponse<Page<Doctor>>> getDoctors(
-            @Parameter(description = "Filtrar por especialidad (opcional)", example = "Cardiología")
-            @RequestParam(required = false) String specialty,
             @Parameter(hidden = true) Pageable pageable) {
-        if (specialty != null) {
-            return ResponseEntity.ok(ApiResponse.success("Doctores obtenidos", doctorService.findBySpecialty(specialty, pageable)));
-        }
         return ResponseEntity.ok(ApiResponse.success("Doctores obtenidos", doctorService.findAll(pageable)));
     }
 
     @GetMapping("/specialties")
     @Operation(
         summary = "Obtener especialidades",
-        description = "Retorna todas las especialidades disponibles de los doctores."
+        description = "Retorna todas las especialidades disponibles de los doctores. Puede filtrar por especialidad específica."
     )
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Especialidades obtenidas",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = com.sistemaClinico.clinicalEngine.dto.ApiResponse.class)))
-    public ResponseEntity<ApiResponse<?>> getSpecialties() {
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Especialidades obtenidas",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = com.sistemaClinico.clinicalEngine.dto.ApiResponse.class))),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Parámetros inválidos")
+    })
+    public ResponseEntity<ApiResponse<?>> getSpecialties(
+            @Parameter(description = "Filtrar por especialidad específica (opcional)", 
+                   example = "Cardiología",
+                   name = "specialty",
+                   required = false)
+            @RequestParam(required = false) String specialty,
+            @Parameter(hidden = true) Pageable pageable) {
+        if (specialty != null) {
+            return ResponseEntity.ok(ApiResponse.success("Doctores filtrados por especialidad", doctorService.findBySpecialty(specialty, pageable)));
+        }
         return ResponseEntity.ok(ApiResponse.success("Especialidades obtenidas", doctorService.getSpecialties()));
     }
 
@@ -97,8 +105,8 @@ public class DoctorController {
     public ResponseEntity<ApiResponse<Doctor>> update(
             @Parameter(description = "ID del doctor a actualizar", example = "1", required = true)
             @PathVariable Long id,
-            @Valid @RequestBody Doctor doctor) {
-        return ResponseEntity.ok(ApiResponse.success("Doctor actualizado correctamente",doctorService.update(id, doctor)));
+            @Valid @RequestBody UpdateDoctorRequest doctorRequest) {
+        return ResponseEntity.ok(ApiResponse.success("Doctor actualizado correctamente",doctorService.update(id, doctorRequest)));
     }
 
     @DeleteMapping("/{id}")

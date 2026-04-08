@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 // import lombok.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
 
 @Entity
@@ -25,7 +26,10 @@ public class MedicalRecord {
     @OneToMany(mappedBy = "medicalRecord", cascade = CascadeType.ALL)
     private List<MedicalNote> notes;
 
-    public MedicalRecord() {}
+    public MedicalRecord() {
+        this.appointments = new java.util.ArrayList<>();
+        this.notes = new java.util.ArrayList<>();
+    }
 
     public MedicalRecord(Long id, Long patientId, List<Appointment> appointments, List<MedicalNote> notes) {
         this.id = id;

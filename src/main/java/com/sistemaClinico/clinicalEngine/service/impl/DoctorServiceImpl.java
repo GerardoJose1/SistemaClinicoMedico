@@ -1,5 +1,6 @@
 package com.sistemaClinico.clinicalEngine.service.impl;
 
+import com.sistemaClinico.clinicalEngine.dto.UpdateDoctorRequest;
 import com.sistemaClinico.clinicalEngine.entity.Doctor;
 import com.sistemaClinico.clinicalEngine.repository.DoctorRepository;
 import com.sistemaClinico.clinicalEngine.service.DoctorService;
@@ -44,12 +45,12 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor update(Long id, Doctor doctor) {
+    public Doctor update(Long id, UpdateDoctorRequest doctorRequest) {
         Doctor existing = findById(id);
-        existing.setName(doctor.getName());
-        existing.setSpecialty(doctor.getSpecialty());
-        existing.setAvailableHours(doctor.getAvailableHours());
-        existing.setConsultationFee(doctor.getConsultationFee());
+        existing.setName(doctorRequest.getName());
+        existing.setSpecialty(doctorRequest.getSpecialty());
+        existing.setAvailableHours(doctorRequest.getAvailableHours());
+        existing.setConsultationFee(doctorRequest.getConsultationFee());
         return doctorRepository.save(existing);
     }
 

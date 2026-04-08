@@ -1,5 +1,6 @@
 package com.sistemaClinico.clinicalEngine.service;
 
+import com.sistemaClinico.clinicalEngine.dto.UpdateDoctorRequest;
 import com.sistemaClinico.clinicalEngine.entity.Doctor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,6 @@ public interface DoctorService {
     Page<Doctor> findAll(Pageable pageable);
     List<String> getSpecialties();
     Doctor findById(Long id);
-    Doctor update(Long id, Doctor doctor);
+    Doctor update(Long id, UpdateDoctorRequest doctorRequest);
     void delete(Long id);
 }

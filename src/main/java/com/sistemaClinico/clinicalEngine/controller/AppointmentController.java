@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,11 +46,62 @@ public class AppointmentController {
             @Parameter(description = "Fecha de fin (ISO 8601 - opcional)", example = "2024-12-31T23:59:59")
             @RequestParam(required = false) LocalDateTime end,
             
-            Pageable pageable) {
+            @Parameter(description = "Número de página (default: 0)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+            
+            @Parameter(description = "Tamaño de página (default: 10)", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+            
+            @Parameter(description = "Campo de ordenamiento (opcional)", example = "dateTime")
+            @RequestParam(required = false) String sortField,
+            
+            @Parameter(description = "Dirección de ordenamiento (opcional)", example = "desc")
+            @RequestParam(required = false) String sortDir) {
+        
+        // Crear Pageable seguro
+        Pageable pageable = createSafePageable(page, size, sortField, sortDir);
+        
         if (start != null && end != null) {
             return ResponseEntity.ok(ApiResponse.success("Citas obtenidas",appointmentService.findByDoctorAndDateRange(doctorId, start, end, pageable)));
         }
         return ResponseEntity.ok(ApiResponse.success("Citas obtenidas",appointmentService.findByDoctor(doctorId, pageable)));
+    }
+    
+    private Pageable createSafePageable(int page, int size, String sortField, String sortDir) {
+        // Validar y limitar el tamaño de página
+        if (size > 100) size = 100;
+        if (size < 1) size = 10;
+        
+        // Validar página
+        if (page < 0) page = 0;
+        
+        // Si no se especifica ordenamiento, usar ordenamiento por defecto
+        if (sortField == null || sortField.trim().isEmpty()) {
+            return PageRequest.of(page, size, Sort.by("dateTime").descending());
+        }
+        
+        // Validar que el campo de ordenamiento sea válido
+        String[] validFields = {"id", "patientId", "dateTime", "status"};
+        boolean isValidField = false;
+        for (String validField : validFields) {
+            if (validField.equals(sortField.trim())) {
+                isValidField = true;
+                break;
+            }
+        }
+        
+        // Si el campo no es válido, usar ordenamiento por defecto
+        if (!isValidField) {
+            sortField = "dateTime";
+        }
+        
+        // Determinar dirección de ordenamiento
+        Sort.Direction direction = Sort.Direction.ASC;
+        if (sortDir != null && sortDir.trim().equalsIgnoreCase("desc")) {
+            direction = Sort.Direction.DESC;
+        }
+        
+        return PageRequest.of(page, size, Sort.by(direction, sortField));
     }
 
     @PostMapping
