@@ -37,13 +37,23 @@ public class AppointmentController {
     public ResponseEntity<ApiResponse<Page<Appointment>>> getByDoctor(
             @Parameter(description = "ID del doctor", example = "1", required = true)
             @RequestParam Long doctorId,
+            
 
             @Parameter(description = "Fecha de inicio (ISO 8601 - opcional)", example = "2024-01-01T00:00:00")
-            @RequestParam(required = false) LocalDateTime start,
+            
 
             @Parameter(description = "Fecha de fin (ISO 8601 - opcional)", example = "2024-12-31T23:59:59")
-            @RequestParam(required = false) LocalDateTime end,
+            
 
+=======
+            
+            @Parameter(description = "Fecha de inicio (ISO 8601 - opcional)", example = "2024-01-01T00:00:00")
+            @RequestParam(required = false) LocalDateTime start,
+            
+            @Parameter(description = "Fecha de fin (ISO 8601 - opcional)", example = "2024-12-31T23:59:59")
+            @RequestParam(required = false) LocalDateTime end,
+            
+>>>>>>> 9059c39ca23cae97fc2c92f65a85d71e66fdd794
             Pageable pageable) {
         if (start != null && end != null) {
             return ResponseEntity.ok(ApiResponse.success("Citas obtenidas",appointmentService.findByDoctorAndDateRange(doctorId, start, end, pageable)));
@@ -55,23 +65,30 @@ public class AppointmentController {
     @Operation(
         summary = "Crear nueva cita",
         description = "Crea una nueva cita médica entre un paciente y un doctor"
-    )
+            
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Cita creada exitosamente"),
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Parámetros inválidos o conflicto de horario"),
+            
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Paciente o doctor no encontrado"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Error al crear cita")
     })
     public ResponseEntity<ApiResponse<Appointment>> create(
             @Parameter(description = "ID del paciente", example = "1", required = true)
             @RequestParam Long patientId,
+<<<<<<< HEAD
 
             @Parameter(description = "ID del doctor", example = "1", required = true)
             @RequestParam Long doctorId,
 
+=======
+            
+            @Parameter(description = "ID del doctor", example = "1", required = true)
+            @RequestParam Long doctorId,
+            
+>>>>>>> 9059c39ca23cae97fc2c92f65a85d71e66fdd794
             @Parameter(description = "Fecha y hora de la cita (ISO 8601)", example = "2024-03-15T14:30:00", required = true)
             @RequestParam LocalDateTime dateTime) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Cita creada",appointmentService.create(patientId, doctorId, dateTime)));
+            
     }
 
     @PutMapping("/{id}/status")
@@ -88,7 +105,11 @@ public class AppointmentController {
     public ResponseEntity<ApiResponse<Appointment>> updateStatus(
             @Parameter(description = "ID de la cita", example = "1", required = true)
             @PathVariable Long id,
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 9059c39ca23cae97fc2c92f65a85d71e66fdd794
             @Parameter(description = "Nuevo estado de la cita", example = "CONFIRMED", required = true)
             @RequestParam AppointmentStatus status) {
         return ResponseEntity.ok(ApiResponse.success("Cita actualizada",appointmentService.updateStatus(id, status)));
