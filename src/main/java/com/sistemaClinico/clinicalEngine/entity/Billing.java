@@ -2,11 +2,13 @@ package com.sistemaClinico.clinicalEngine.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "billing")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Billing {
 
     @Id
@@ -32,29 +34,6 @@ public class Billing {
     @Column(nullable = false)
     private BillingStatus status;
 
-    public Billing() {}
-
-    public Billing(Appointment appointment, BigDecimal amount, LocalDateTime billingDate, String invoiceNumber, BillingStatus status) {
-        this.appointment = appointment;
-        this.amount = amount;
-        this.billingDate = billingDate;
-        this.invoiceNumber = invoiceNumber;
-        this.status = status;
-    }
-
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Appointment getAppointment() { return appointment; }
-    public void setAppointment(Appointment appointment) { this.appointment = appointment; }
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
-    public LocalDateTime getBillingDate() { return billingDate; }
-    public void setBillingDate(LocalDateTime billingDate) { this.billingDate = billingDate; }
-    public String getInvoiceNumber() { return invoiceNumber; }
-    public void setInvoiceNumber(String invoiceNumber) { this.invoiceNumber = invoiceNumber; }
-    public BillingStatus getStatus() { return status; }
-    public void setStatus(BillingStatus status) { this.status = status; }
 
     public enum BillingStatus {
         PENDING, PAID, CANCELLED
