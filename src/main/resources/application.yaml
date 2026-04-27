@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: clinicalEngine
+  profiles:
+    active: prod
 
   datasource:
     url: jdbc:mysql://localhost:3306/clinical_db
@@ -14,7 +16,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
   data:
     redis:
@@ -24,7 +26,14 @@ spring:
   cache:
     type: redis
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+
 wordpress:
-  base-url: ${WORDPRESS_URL:http://localhost:9000}
+  base-url: ${WORDPRESS_URL:http://localhost:8080}
   username: ${WORDPRESS_USER:admin}
   app-password: ${WORDPRESS_APP_PASSWORD:zPyB SYfc qQC6 Twrn PrWk mTOJ}

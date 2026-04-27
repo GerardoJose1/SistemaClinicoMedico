@@ -146,4 +146,13 @@ public class AppointmentController {
             @RequestParam AppointmentStatus status) {
         return ResponseEntity.ok(ApiResponse.success("Cita actualizada",appointmentService.updateStatus(id, status)));
     }
+
+    @GetMapping("/patient/{patientId}")
+    @Operation(summary = "Obtener citas por paciente")
+    public ResponseEntity<ApiResponse<Page<Appointment>>> getByPatient(
+            @PathVariable Long patientId,
+            Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success("Citas obtenidas",
+                appointmentService.findByPatient(patientId, pageable)));
+    }
 }

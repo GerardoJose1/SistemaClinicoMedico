@@ -36,8 +36,9 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // Persistencia y MySQL
+    // Persistencia y Base de Datos
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.h2database:h2'
     implementation 'com.mysql:mysql-connector-j'
 
     // Redis y Cache
@@ -47,8 +48,12 @@ dependencies {
     // Validaciones
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // RabbitMQ
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.amqp:spring-rabbit-test'
 
 }
 

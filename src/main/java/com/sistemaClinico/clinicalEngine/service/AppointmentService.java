@@ -12,4 +12,5 @@ public interface AppointmentService {
     Appointment findById(Long id);
     Page<Appointment> findByDoctor(Long doctorId, Pageable pageable);
     Page<Appointment> findByDoctorAndDateRange(Long doctorId, LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Page<Appointment> findByPatient(Long patientId, Pageable pageable);
 }

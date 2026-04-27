@@ -39,7 +39,15 @@ public class DoctorController {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Parámetros inválidos")
     })
     public ResponseEntity<ApiResponse<Page<Doctor>>> getDoctors(
+            @Parameter(description = "Filtrar por especialidad específica (opcional)", 
+                   example = "Cardiología",
+                   name = "specialty",
+                   required = false)
+            @RequestParam(required = false) String specialty,
             @Parameter(hidden = true) Pageable pageable) {
+        if (specialty != null) {
+            return ResponseEntity.ok(ApiResponse.success("Doctores filtrados por especialidad", doctorService.findBySpecialty(specialty, pageable)));
+        }
         return ResponseEntity.ok(ApiResponse.success("Doctores obtenidos", doctorService.findAll(pageable)));
     }
 
