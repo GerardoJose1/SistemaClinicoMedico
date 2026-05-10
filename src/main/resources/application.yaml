@@ -27,11 +27,21 @@ spring:
     type: redis
 
   rabbitmq:
-    host: localhost
+    host: jitters-racoon-crawling.ngrok-free.dev
     port: 5672
     username: admin
     password: admin
-    virtual-host: /
+    virtual-host: ommfcrhl
+    ssl:
+      enabled: true
+    listener:
+      simple:
+        acknowledge-mode: auto
+        retry:
+          enabled: true
+          initial-interval: 1000ms
+          max-attempts: 3
+          max-interval: 10000ms
 
 wordpress:
   base-url: ${WORDPRESS_URL:http://localhost:8080}
