@@ -3,6 +3,7 @@ package com.sistemaClinico.clinicalEngine.service.impl;
 import com.sistemaClinico.clinicalEngine.dto.CreateDoctorRequest;
 import com.sistemaClinico.clinicalEngine.dto.UpdateDoctorRequest;
 import com.sistemaClinico.clinicalEngine.entity.Doctor;
+import com.sistemaClinico.clinicalEngine.repository.AppointmentRepository;
 import com.sistemaClinico.clinicalEngine.repository.DoctorRepository;
 import com.sistemaClinico.clinicalEngine.service.DoctorService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     public Doctor save(Doctor doctor) {
@@ -68,6 +70,20 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public void delete(Long id) {
+        // Validar que el médico no tenga citas activas
+        boolean hasActiveAppointments = appointmentRepository.existsByDoctorIdAndStatusIn(
+            id, 
+            java.util.List.of(
+                com.sistemaClinico.clinicalEngine.enums.AppointmentStatus.SCHEDULED,
+                com.sistemaClinico.clinicalEngine.enums.AppointmentStatus.CONFIRMED,
+                com.sistemaClinico.clinicalEngine.enums.AppointmentStatus.IN_PROGRESS
+            )
+        );
+        
+        if (hasActiveAppointments) {
+            throw new IllegalStateException("No se puede eliminar un médico con citas activas");
+        }
+        
         doctorRepository.deleteById(id);
     }
 }

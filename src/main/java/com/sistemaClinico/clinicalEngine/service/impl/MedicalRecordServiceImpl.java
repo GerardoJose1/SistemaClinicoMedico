@@ -28,23 +28,30 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     @Override
     public MedicalRecordResponse addNote(Long patientId, CreateMedicalNoteRequest noteRequest) {
+        // Validar que al menos uno de los campos no esté vacío
+        if ((noteRequest.getDiagnosis() == null || noteRequest.getDiagnosis().isBlank()) &&
+            (noteRequest.getTreatment() == null || noteRequest.getTreatment().isBlank()) &&
+            (noteRequest.getNotes() == null || noteRequest.getNotes().isBlank())) {
+            throw new IllegalArgumentException("La nota médica debe contener al menos diagnóstico, tratamiento o notas");
+        }
+
         MedicalRecord record = findByPatientId(patientId);
-        
+
         // Inicializar la lista de notas si es nula
         if (record.getNotes() == null) {
             record.setNotes(new java.util.ArrayList<>());
         }
-        
+
         // Crear MedicalNote a partir del DTO
         MedicalNote note = MedicalNote.builder()
                 .diagnosis(noteRequest.getDiagnosis())
                 .treatment(noteRequest.getTreatment())
                 .notes(noteRequest.getNotes())
                 .build();
-        
+
         note.setMedicalRecord(record);
         record.getNotes().add(note);
-        
+
         MedicalRecord savedRecord = medicalRecordRepository.save(record);
         return MedicalRecordMapper.toResponse(savedRecord);
     }

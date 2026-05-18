@@ -34,6 +34,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment create(Long patientId, Long doctorId, LocalDateTime dateTime, String patientEmail, String patientName) {
         Doctor doctor = doctorService.findById(doctorId);
 
+        // Validar que la fecha sea futura
+        if (dateTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("No se pueden crear citas en fechas pasadas");
+        }
+
         appointmentRepository.findByDoctorIdAndDateTime(doctorId, dateTime)
                 .ifPresent(a -> { throw new RuntimeException("El médico ya tiene una cita en ese horario"); });
 
@@ -69,6 +74,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment updateStatus(Long id, AppointmentStatus status) {
         Appointment appointment = findById(id);
         AppointmentStatus oldStatus = appointment.getStatus();
+
+        // Validar transiciones de estado válidas
+        validateStatusTransition(oldStatus, status);
+
         appointment.setStatus(status);
         Appointment savedAppointment = appointmentRepository.save(appointment);
         
@@ -119,5 +128,42 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Page<Appointment> findByPatient(Long patientId, Pageable pageable) {
         return appointmentRepository.findByPatientId(patientId, pageable);
+    }
+
+    private void validateStatusTransition(AppointmentStatus currentStatus, AppointmentStatus newStatus) {
+        // No permitir cambiar estado si ya está cancelada o completada
+        if (currentStatus == AppointmentStatus.CANCELLED) {
+            throw new IllegalStateException("No se puede cambiar el estado de una cita cancelada");
+        }
+        if (currentStatus == AppointmentStatus.COMPLETED) {
+            throw new IllegalStateException("No se puede cambiar el estado de una cita completada");
+        }
+
+        // Validar transiciones permitidas
+        switch (currentStatus) {
+            case SCHEDULED:
+                if (newStatus != AppointmentStatus.CONFIRMED && newStatus != AppointmentStatus.CANCELLED) {
+                    throw new IllegalStateException(
+                        "Desde SCHEDULED solo se puede cambiar a CONFIRMED o CANCELLED"
+                    );
+                }
+                break;
+            case CONFIRMED:
+                if (newStatus != AppointmentStatus.IN_PROGRESS && newStatus != AppointmentStatus.CANCELLED) {
+                    throw new IllegalStateException(
+                        "Desde CONFIRMED solo se puede cambiar a IN_PROGRESS o CANCELLED"
+                    );
+                }
+                break;
+            case IN_PROGRESS:
+                if (newStatus != AppointmentStatus.COMPLETED && newStatus != AppointmentStatus.CANCELLED) {
+                    throw new IllegalStateException(
+                        "Desde IN_PROGRESS solo se puede cambiar a COMPLETED o CANCELLED"
+                    );
+                }
+                break;
+            default:
+                throw new IllegalStateException("Transición de estado no válida");
+        }
     }
 }
