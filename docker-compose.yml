@@ -11,12 +11,20 @@ services:
       - "3306:3306"
     volumes:
       - mysql-clinical-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
   redis:
     image: redis:7-alpine
     container_name: redis-clinical
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 5s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:3.12-management
@@ -29,6 +37,10 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      timeout: 20s
+      retries: 5
 
   wordpress:
     image: wordpress:latest
@@ -41,9 +53,37 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - mysql-clinical
+      mysql-clinical:
+        condition: service_healthy
     volumes:
       - wordpress-data:/var/www/html
+
+  clinical-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: clinical-app
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-clinical:3306/clinical_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: admin
+      SPRING_RABBITMQ_PASSWORD: admin
+      WORDPRESS_API_URL: http://wordpress:80
+    depends_on:
+      mysql-clinical:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   mysql-clinical-data:

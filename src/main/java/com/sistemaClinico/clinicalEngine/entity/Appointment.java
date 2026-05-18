@@ -19,6 +19,12 @@ public class Appointment {
     @Column(name = "patient_id", nullable = false)
     private Long patientId;
 
+    @Column(name = "patient_name")
+    private String patientName;
+
+    @Column(name = "patient_email")
+    private String patientEmail;
+
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;

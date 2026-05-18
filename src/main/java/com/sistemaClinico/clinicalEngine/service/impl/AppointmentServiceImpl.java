@@ -39,6 +39,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Appointment appointment = Appointment.builder()
                 .patientId(patientId)
+                .patientName(patientName)
+                .patientEmail(patientEmail)
                 .doctor(doctor)
                 .dateTime(dateTime)
                 .status(AppointmentStatus.SCHEDULED)
