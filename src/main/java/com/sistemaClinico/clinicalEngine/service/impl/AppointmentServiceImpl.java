@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -29,7 +30,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
-    public Appointment create(Long patientId, Long doctorId, LocalDateTime dateTime) {
+    @Transactional
+    public Appointment create(Long patientId, Long doctorId, LocalDateTime dateTime, String patientEmail, String patientName) {
         Doctor doctor = doctorService.findById(doctorId);
 
         appointmentRepository.findByDoctorIdAndDateTime(doctorId, dateTime)
@@ -48,8 +50,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         AppointmentEvent event = AppointmentEvent.builder()
                 .appointmentId(UUID.randomUUID())
                 .patientId(patientId)
-                .patientEmail("patient@example.com") // TODO: Get from patient service
-                .patientName("Patient Name") // TODO: Get from patient service
+                .patientEmail(patientEmail)
+                .patientName(patientName)
                 .doctorName(doctor.getName())
                 .specialty(doctor.getSpecialty())
                 .dateTime(dateTime)

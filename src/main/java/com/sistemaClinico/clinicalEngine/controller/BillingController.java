@@ -18,44 +18,44 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/billing")
 @RequiredArgsConstructor
-@Tag(name = "Billing", description = "Billing management endpoints")
+@Tag(name = "Facturación", description = "Endpoints para gestión de facturación")
 public class BillingController {
 
     private final BillingService billingService;
 
     @GetMapping("/{appointmentId}")
-    @Operation(summary = "Get invoice by appointment ID", description = "Retrieves the invoice for a specific appointment")
+    @Operation(summary = "Obtener factura por ID de cita", description = "Recupera la factura para una cita específica")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Invoice found"),
-        @ApiResponse(responseCode = "404", description = "Invoice not found")
+        @ApiResponse(responseCode = "200", description = "Factura encontrada"),
+        @ApiResponse(responseCode = "404", description = "Factura no encontrada")
     })
     public ResponseEntity<Billing> getInvoiceByAppointmentId(
-            @Parameter(description = "Appointment ID") @PathVariable Long appointmentId) {
+            @Parameter(description = "ID de la cita") @PathVariable Long appointmentId) {
         Billing billing = billingService.getInvoiceByAppointmentId(appointmentId);
         return ResponseEntity.ok(billing);
     }
 
     @PostMapping("/{appointmentId}/generate")
-    @Operation(summary = "Generate invoice for appointment", description = "Generates a new invoice for a completed appointment")
+    @Operation(summary = "Generar factura para cita", description = "Genera una nueva factura para una cita completada")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Invoice generated successfully"),
-        @ApiResponse(responseCode = "400", description = "Appointment not completed or invoice already exists")
+        @ApiResponse(responseCode = "200", description = "Factura generada exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Cita no completada o factura ya existe")
     })
     public ResponseEntity<Billing> generateInvoice(
-            @Parameter(description = "Appointment ID") @PathVariable Long appointmentId) {
+            @Parameter(description = "ID de la cita") @PathVariable Long appointmentId) {
         Billing billing = billingService.generateInvoiceForAppointment(appointmentId);
         return ResponseEntity.ok(billing);
     }
 
     @GetMapping("/reports")
-    @Operation(summary = "Get invoices by date range", description = "Retrieves paginated invoices within a date range")
+    @Operation(summary = "Obtener facturas por rango de fechas", description = "Recupera facturas paginadas dentro de un rango de fechas")
     public ResponseEntity<java.util.List<Billing>> getInvoicesByDateRange(
-            @Parameter(description = "Start date (yyyy-MM-dd'T'HH:mm:ss)") 
+            @Parameter(description = "Fecha de inicio (yyyy-MM-dd'T'HH:mm:ss)") 
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @Parameter(description = "End date (yyyy-MM-dd'T'HH:mm:ss)") 
+            @Parameter(description = "Fecha de fin (yyyy-MM-dd'T'HH:mm:ss)") 
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-            @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {
+            @Parameter(description = "Número de página (basado en 0)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Tamaño de página") @RequestParam(defaultValue = "10") int size) {
         
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
         org.springframework.data.domain.Page<Billing> billingPage = billingService.getInvoicesByDateRange(startDate, endDate, pageable);
@@ -67,11 +67,11 @@ public class BillingController {
     }
 
     @GetMapping("/status/{status}")
-    @Operation(summary = "Get invoices by status", description = "Retrieves paginated invoices by billing status")
+    @Operation(summary = "Obtener facturas por estado", description = "Recupera facturas paginadas por estado de facturación")
     public ResponseEntity<java.util.List<Billing>> getInvoicesByStatus(
-            @Parameter(description = "Billing status") @PathVariable Billing.BillingStatus status,
-            @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {
+            @Parameter(description = "Estado de facturación") @PathVariable Billing.BillingStatus status,
+            @Parameter(description = "Número de página (basado en 0)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Tamaño de página") @RequestParam(defaultValue = "10") int size) {
         
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
         org.springframework.data.domain.Page<Billing> billingPage = billingService.getInvoicesByStatus(status, pageable);

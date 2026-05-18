@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/appointments")
 @RequiredArgsConstructor
-@Tag(name = "Appointments", description = "Operaciones para gestionar citas médicas")
+@Tag(name = "Citas", description = "Operaciones para gestionar citas médicas")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
@@ -123,8 +123,14 @@ public class AppointmentController {
             @RequestParam Long doctorId,
             
             @Parameter(description = "Fecha y hora de la cita (ISO 8601)", example = "2024-03-15T14:30:00", required = true)
-            @RequestParam LocalDateTime dateTime) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Cita creada",appointmentService.create(patientId, doctorId, dateTime)));
+            @RequestParam LocalDateTime dateTime,
+            
+            @Parameter(description = "Email del paciente", example = "patient@example.com", required = true)
+            @RequestParam String patientEmail,
+            
+            @Parameter(description = "Nombre del paciente", example = "Juan Pérez", required = true)
+            @RequestParam String patientName) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Cita creada",appointmentService.create(patientId, doctorId, dateTime, patientEmail, patientName)));
     }
 
     @PutMapping("/{id}/status")
@@ -151,7 +157,22 @@ public class AppointmentController {
     @Operation(summary = "Obtener citas por paciente")
     public ResponseEntity<ApiResponse<Page<Appointment>>> getByPatient(
             @PathVariable Long patientId,
-            Pageable pageable) {
+            
+            @Parameter(description = "Número de página (default: 0)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+            
+            @Parameter(description = "Tamaño de página (default: 10)", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+            
+            @Parameter(description = "Campo de ordenamiento (opcional)", example = "dateTime")
+            @RequestParam(required = false) String sortField,
+            
+            @Parameter(description = "Dirección de ordenamiento (opcional)", example = "desc")
+            @RequestParam(required = false) String sortDir) {
+        
+        // Crear Pageable seguro
+        Pageable pageable = createSafePageable(page, size, sortField, sortDir);
+        
         return ResponseEntity.ok(ApiResponse.success("Citas obtenidas",
                 appointmentService.findByPatient(patientId, pageable)));
     }

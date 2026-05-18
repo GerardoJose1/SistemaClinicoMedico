@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 
 public interface AppointmentService {
-    Appointment create(Long patientId, Long doctorId, LocalDateTime dateTime);
+    Appointment create(Long patientId, Long doctorId, LocalDateTime dateTime, String patientEmail, String patientName);
     Appointment updateStatus(Long id, AppointmentStatus status);
     Appointment findById(Long id);
     Page<Appointment> findByDoctor(Long doctorId, Pageable pageable);

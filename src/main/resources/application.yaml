@@ -27,13 +27,10 @@ spring:
     type: redis
 
   rabbitmq:
-    host: jitters-racoon-crawling.ngrok-free.dev
+    host: 100.95.36.74
     port: 5672
     username: admin
     password: admin
-    virtual-host: ommfcrhl
-    ssl:
-      enabled: true
     listener:
       simple:
         acknowledge-mode: auto

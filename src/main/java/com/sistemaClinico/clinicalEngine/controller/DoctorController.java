@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/doctors")
 @RequiredArgsConstructor
-@Tag(name = "Doctors", description = "Operaciones relacionadas con doctores")
+@Tag(name = "Doctores", description = "Operaciones relacionadas con doctores")
 public class DoctorController {
 
     private final DoctorService doctorService;

@@ -1,6 +1,7 @@
 package com.sistemaClinico.clinicalEngine.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,11 +18,11 @@ public class RabbitMQConfig {
     public static final String APPOINTMENTS_EXCHANGE = "appointments.exchange";
     public static final String APPOINTMENT_CONFIRMED_ROUTING_KEY = "appointment.confirmed";
     public static final String APPOINTMENT_STATUS_CHANGED_ROUTING_KEY = "appointment.status.changed";
-    public static final String ORDER_CANCELLED_ROUTING_KEY = "order.cancelled";
+    public static final String ORDER_CANCELLED_ROUTING_KEY = "appointment.cancelled";
 
     @Bean
-    public TopicExchange appointmentsExchange() {
-        return new TopicExchange(APPOINTMENTS_EXCHANGE, true, false);
+    public DirectExchange appointmentsExchange() {
+        return new DirectExchange(APPOINTMENTS_EXCHANGE, true, false);
     }
 
     @Bean

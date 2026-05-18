@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/records")
 @RequiredArgsConstructor
-@Tag(name = "Medical Records", description = "Operaciones para gestionar historiales médicos")
+@Tag(name = "Historial Médico", description = "Operaciones para gestionar historiales médicos")
 public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
